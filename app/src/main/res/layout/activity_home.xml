@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/bg_home">
+
+    <!-- TEXT ON RED BUBBLE (IMAGE ALREADY HAS BUBBLE) -->
+    <TextView
+        android:id="@+id/tvGreeting"
+        android:layout_width="295dp"
+        android:layout_height="128dp"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="70dp"
+        android:gravity="center"
+        android:padding="8dp"
+        android:text="Hi Rose! What’s brewing in your honey pot of thoughts?"
+        android:textColor="@android:color/white"
+        android:textSize="20sp" />
+
+    <!-- BREW BUTTON -->
+
+    <!-- CALENDAR BUTTON -->
+
+    <Button
+        android:id="@+id/btnBrew"
+        android:layout_width="120dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="450dp"
+        android:backgroundTint="#F58B7A"
+        android:text="Brew"
+        android:textColor="@android:color/white" />
+
+    <Button
+        android:id="@+id/btnCalendar"
+        android:layout_width="120dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/btnBrew"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="10dp"
+        android:backgroundTint="#F58B7A"
+        android:text="Calendar"
+        android:textColor="@android:color/white" />
+
+</RelativeLayout>
