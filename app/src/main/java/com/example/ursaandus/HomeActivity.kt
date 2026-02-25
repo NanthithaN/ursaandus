@@ -81,6 +81,11 @@ class HomeActivity : AppCompatActivity() {
                 )
             }
         }
+        val locationBtn = findViewById<Button>(R.id.btnLocation)
+
+        locationBtn.setOnClickListener {
+            startActivity(Intent(this, LocationActivity::class.java))
+        }
 
     }
 
@@ -169,4 +174,5 @@ class HomeActivity : AppCompatActivity() {
             else -> super.onOptionsItemSelected(item)
         }
     }
+
 }
