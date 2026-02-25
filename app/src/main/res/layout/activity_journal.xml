@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <!-- Background -->
+    <ImageView
+        android:id="@+id/bgImage"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:src="@drawable/bg_journal"
+        android:scaleType="centerCrop"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+    <!-- Top Quote Box -->
+    <LinearLayout
+        android:id="@+id/topBox"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:background="@drawable/rounded_box"
+        android:padding="16dp"
+        android:layout_margin="20dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <ImageButton
+            android:id="@+id/btnBack"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:src="@android:drawable/ic_media_previous"
+            android:background="@null"
+            android:layout_alignParentEnd="true"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Stirring your thoughts into the honey..."
+            android:textAlignment="center"
+            android:textSize="18sp"
+            android:textColor="#5C3A2E"
+            android:fontFamily="serif"/>
+    </LinearLayout>
+
+    <!-- Center Journal Box -->
+    <LinearLayout
+        android:id="@+id/journalBox"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:orientation="vertical"
+        android:background="@drawable/rounded_transparent_box"
+        android:padding="20dp"
+        android:layout_margin="30dp"
+        app:layout_constraintTop_toBottomOf="@id/topBox"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <!-- Top Row (Date + Calendar + Back) -->
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/tvSelectedDate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_marginStart="179dp"
+                android:text="Select Date"
+                android:textColor="#5C3A2E"
+                android:textSize="14sp" />
+
+            <ImageButton
+                android:id="@+id/btnCalendar"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_marginStart="182dp"
+                android:layout_toEndOf="@id/tvSelectedDate"
+                android:background="@null"
+                android:src="@android:drawable/ic_menu_my_calendar" />
+
+
+        </RelativeLayout>
+
+        <!-- Title -->
+        <EditText
+            android:id="@+id/etTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Add Title"
+            android:textSize="20sp"
+            android:textColor="#5C3A2E"
+            android:background="@null"
+            android:textStyle="bold"/>
+
+        <!-- Journal Content -->
+        <EditText
+            android:id="@+id/etJournal"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:hint="Pour your thoughts....."
+            android:gravity="top"
+            android:background="@null"
+            android:textColor="#5C3A2E"
+            android:textSize="16sp"
+            android:paddingTop="10dp"/>
+
+        <!-- Save Button -->
+        <Button
+            android:id="@+id/btnSave"
+            android:layout_width="100dp"
+            android:layout_height="40dp"
+            android:text="SAVE"
+            android:textAllCaps="false"
+            android:background="@drawable/save_button_bg"
+            android:textColor="#5C3A2E"
+            android:layout_gravity="end"
+            android:layout_marginTop="10dp"/>
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

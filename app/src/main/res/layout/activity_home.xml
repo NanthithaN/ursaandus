@@ -19,6 +19,32 @@
 
     <!-- BREW BUTTON -->
 
+    <!-- PROGRESS LABEL -->
+    <TextView
+        android:id="@+id/tvProgressLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/tvGreeting"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="20dp"
+        android:text="Your Journaling Progress"
+        android:textSize="16sp"
+        android:textColor="@android:color/white" />
+
+    <!-- HORIZONTAL PROGRESS BAR -->
+    <ProgressBar
+        android:id="@+id/progressBar"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="250dp"
+        android:layout_height="20dp"
+        android:layout_below="@id/tvProgressLabel"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="10dp"
+        android:max="100"
+        android:progress="40"
+        android:progressTint="#F58B7A"
+        android:backgroundTint="@android:color/white"/>
+
     <!-- CALENDAR BUTTON -->
 
     <Button

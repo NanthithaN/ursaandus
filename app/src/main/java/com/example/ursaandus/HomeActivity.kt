@@ -1,13 +1,23 @@
 package com.example.ursaandus
-import android.view.Menu
+
+import android.app.NotificationChannel
+import android.app.NotificationManager
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.view.ContextMenu
+import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import android.widget.Button
+import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
+private val REQUEST_NOTIFICATION_PERMISSION = 1
+
 class HomeActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -17,13 +27,86 @@ class HomeActivity : AppCompatActivity() {
         val username = intent.getStringExtra("username")
         val welcomeText = findViewById<TextView>(R.id.tvGreeting)
 
-        welcomeText.text = "Hi $username! What's brewing in your honey pot of thoughts?"
+        welcomeText.text =
+            "Hi $username! What's brewing in your honey pot of thoughts?"
 
-        // ✅ Register Context Menu
+        // Context menu
         registerForContextMenu(welcomeText)
+
+        val brewBtn = findViewById<Button>(R.id.btnBrew)
+        val calendarBtn = findViewById<Button>(R.id.btnCalendar)
+        val progressBar = findViewById<ProgressBar>(R.id.progressBar)
+
+        // Example progress value
+        progressBar.progress = 70
+
+        // Brew Button Click
+        brewBtn.setOnClickListener {
+
+            val currentDate = java.text.SimpleDateFormat(
+                "dd MMM yyyy",
+                java.util.Locale.getDefault()
+            ).format(java.util.Date())
+
+            val intent = Intent(this, JournalActivity::class.java)
+            intent.putExtra("selectedDate", currentDate)
+            startActivity(intent)
+        }
+
+
+        // Calendar Button Click
+        calendarBtn.setOnClickListener {
+            val intent = Intent(this, CalendarActivity::class.java)
+            startActivity(intent)
+        }
+
+        // ✅ Create Notification Channel (Required for Android 8+)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val channel = NotificationChannel(
+                "journal_channel",
+                "Journal Notifications",
+                NotificationManager.IMPORTANCE_DEFAULT
+            )
+            val manager = getSystemService(NotificationManager::class.java)
+            manager.createNotificationChannel(channel)
+        }
+        // Request Notification Permission for Android 13+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (checkSelfPermission(android.Manifest.permission.POST_NOTIFICATIONS)
+                != android.content.pm.PackageManager.PERMISSION_GRANTED) {
+
+                requestPermissions(
+                    arrayOf(android.Manifest.permission.POST_NOTIFICATIONS),
+                    REQUEST_NOTIFICATION_PERMISSION
+                )
+            }
+        }
+
     }
 
-    // ✅ Create Context Menu
+    // 🔔 Notification Function
+    private fun showNotification() {
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (checkSelfPermission(android.Manifest.permission.POST_NOTIFICATIONS)
+                != android.content.pm.PackageManager.PERMISSION_GRANTED) {
+                Toast.makeText(this, "Notification permission denied", Toast.LENGTH_SHORT).show()
+                return
+            }
+        }
+
+        val builder = NotificationCompat.Builder(this, "journal_channel")
+            .setSmallIcon(R.drawable.ic_launcher_foreground)
+            .setContentTitle("Journal Saved 🌸")
+            .setContentText("Your thoughts are safely stored!")
+            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+            .setAutoCancel(true)
+
+        NotificationManagerCompat.from(this).notify(1, builder.build())
+    }
+
+
+    // ✅ Context Menu
     override fun onCreateContextMenu(
         menu: ContextMenu?,
         v: View?,
@@ -33,7 +116,6 @@ class HomeActivity : AppCompatActivity() {
         menuInflater.inflate(R.menu.home_context_menu, menu)
     }
 
-    // ✅ Handle Menu Clicks
     override fun onContextItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
 
@@ -48,7 +130,6 @@ class HomeActivity : AppCompatActivity() {
             }
 
             R.id.menu_logout -> {
-                // 🔁 Logout → back to Register Page
                 val intent = Intent(this, RegisterActivity::class.java)
                 startActivity(intent)
                 finish()
@@ -57,15 +138,14 @@ class HomeActivity : AppCompatActivity() {
 
             else -> super.onContextItemSelected(item)
         }
-
     }
-    // ✅ Create Options Menu (3-dot menu)
+
+    // ✅ Options Menu (3 dots)
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.home_options_menu, menu)
         return true
     }
 
-    // ✅ Handle Options Menu Clicks
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
 
@@ -89,5 +169,4 @@ class HomeActivity : AppCompatActivity() {
             else -> super.onOptionsItemSelected(item)
         }
     }
-
 }
