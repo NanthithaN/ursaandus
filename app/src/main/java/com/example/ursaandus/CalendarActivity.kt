@@ -4,6 +4,9 @@ import android.content.Intent
 import android.os.Bundle
 import android.widget.DatePicker
 import androidx.appcompat.app.AppCompatActivity
+import java.text.SimpleDateFormat
+import java.util.Calendar
+import java.util.Locale
 
 class CalendarActivity : AppCompatActivity() {
 
@@ -19,7 +22,13 @@ class CalendarActivity : AppCompatActivity() {
             datePicker.dayOfMonth
         ) { _, year, monthOfYear, dayOfMonth ->
 
-            val selectedDate = "$dayOfMonth/${monthOfYear + 1}/$year"
+            // Create a Calendar instance to format the date correctly
+            val calendar = Calendar.getInstance()
+            calendar.set(year, monthOfYear, dayOfMonth)
+
+            // Use the SAME format as HomeActivity: "dd MMM yyyy"
+            val sdf = SimpleDateFormat("dd MMM yyyy", Locale.getDefault())
+            val selectedDate = sdf.format(calendar.time)
 
             val intent = Intent(this, JournalActivity::class.java)
             intent.putExtra("selectedDate", selectedDate)
@@ -27,6 +36,5 @@ class CalendarActivity : AppCompatActivity() {
 
             finish()
         }
-
     }
 }

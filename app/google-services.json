@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "645266245290",
+    "project_id": "ursaus-cc729",
+    "storage_bucket": "ursaus-cc729.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:645266245290:android:de577646dd01fe087172d3",
+        "android_client_info": {
+          "package_name": "com.example.ursaandus"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAg7hbLN-RqmUSfnMut5RpcItoM07TZowU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
