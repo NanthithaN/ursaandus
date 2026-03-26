@@ -32,7 +32,6 @@ class JournalDatabaseHelper(context: Context) :
         values.put("date", date)
         values.put("content", content)
 
-        // Using REPLACE to update if entry for the date already exists
         db.insertWithOnConflict("journal", null, values, SQLiteDatabase.CONFLICT_REPLACE)
     }
 

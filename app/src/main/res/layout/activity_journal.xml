@@ -12,6 +12,7 @@
         android:layout_height="0dp"
         android:src="@drawable/bg_journal"
         android:scaleType="centerCrop"
+        android:contentDescription="Background Image"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -35,7 +36,8 @@
             android:layout_height="30dp"
             android:src="@android:drawable/ic_media_previous"
             android:background="@null"
-            android:layout_alignParentEnd="true"/>
+            android:contentDescription="Back Button"/>
+
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -60,7 +62,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
-        <!-- Top Row (Date + Calendar + Back) -->
+        <!-- Top Row (Date + Calendar) -->
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
@@ -70,7 +72,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentStart="true"
-                android:layout_marginStart="179dp"
                 android:text="Select Date"
                 android:textColor="#5C3A2E"
                 android:textSize="14sp" />
@@ -79,12 +80,10 @@
                 android:id="@+id/btnCalendar"
                 android:layout_width="30dp"
                 android:layout_height="30dp"
-                android:layout_marginStart="182dp"
-                android:layout_toEndOf="@id/tvSelectedDate"
+                android:layout_alignParentEnd="true"
                 android:background="@null"
-                android:src="@android:drawable/ic_menu_my_calendar" />
-
-
+                android:src="@android:drawable/ic_menu_my_calendar"
+                android:contentDescription="Calendar Button" />
         </RelativeLayout>
 
         <!-- Title -->
@@ -96,7 +95,9 @@
             android:textSize="20sp"
             android:textColor="#5C3A2E"
             android:background="@null"
-            android:textStyle="bold"/>
+            android:textStyle="bold"
+            android:importantForAutofill="no"
+            android:inputType="textCapSentences"/>
 
         <!-- Journal Content -->
         <EditText
@@ -109,7 +110,9 @@
             android:background="@null"
             android:textColor="#5C3A2E"
             android:textSize="16sp"
-            android:paddingTop="10dp"/>
+            android:paddingTop="10dp"
+            android:importantForAutofill="no"
+            android:inputType="textMultiLine|textCapSentences"/>
 
         <!-- Save Button -->
         <Button
@@ -123,5 +126,4 @@
             android:layout_gravity="end"
             android:layout_marginTop="10dp"/>
     </LinearLayout>
-
 </androidx.constraintlayout.widget.ConstraintLayout>
