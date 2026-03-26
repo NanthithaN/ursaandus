@@ -17,36 +17,6 @@
         android:textColor="@android:color/white"
         android:textSize="20sp" />
 
-    <!-- BREW BUTTON -->
-
-    <!-- PROGRESS LABEL -->
-    <TextView
-        android:id="@+id/tvProgressLabel"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/tvGreeting"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="20dp"
-        android:text="Your Journaling Progress"
-        android:textSize="16sp"
-        android:textColor="@android:color/white" />
-
-    <!-- HORIZONTAL PROGRESS BAR -->
-    <ProgressBar
-        android:id="@+id/progressBar"
-        style="?android:attr/progressBarStyleHorizontal"
-        android:layout_width="250dp"
-        android:layout_height="20dp"
-        android:layout_below="@id/tvProgressLabel"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="10dp"
-        android:max="100"
-        android:progress="40"
-        android:progressTint="#F58B7A"
-        android:backgroundTint="@android:color/white"/>
-
-    <!-- CALENDAR BUTTON -->
-
     <Button
         android:id="@+id/btnBrew"
         android:layout_width="120dp"
@@ -70,8 +40,26 @@
 
     <Button
         android:id="@+id/btnLocation"
+        android:layout_width="120dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/btnCalendar"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="10dp"
+        android:backgroundTint="#F58B7A"
+        android:text="Location"
+        android:textColor="@android:color/white"/>
+
+    <!-- LOGOUT BUTTON -->
+    <Button
+        android:id="@+id/btnLogout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Location"/>
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:layout_margin="16dp"
+        android:text="Logout"
+        android:backgroundTint="#F58B7A"
+        android:textColor="@android:color/white"
+        style="@style/Widget.MaterialComponents.Button.TextButton"/>
 
 </RelativeLayout>
