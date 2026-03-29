@@ -6,7 +6,7 @@ import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 
 class JournalDatabaseHelper(context: Context) :
-    SQLiteOpenHelper(context, "JournalDB", null, 4) { // Updated version for user-specific journals
+    SQLiteOpenHelper(context, "JournalDB", null, 7) { // Version 7 for multiple media
 
     override fun onCreate(db: SQLiteDatabase) {
         val createTable = """
@@ -14,7 +14,9 @@ class JournalDatabaseHelper(context: Context) :
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             user_email TEXT,
             date TEXT,
-            content TEXT
+            title TEXT,
+            content TEXT,
+            media_uris TEXT
             )
         """.trimIndent()
 
@@ -22,38 +24,42 @@ class JournalDatabaseHelper(context: Context) :
     }
 
     override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
-        if (oldVersion < 4) {
-            // Drop and recreate to add user_email column reliably
+        if (oldVersion < 7) {
             db.execSQL("DROP TABLE IF EXISTS journal")
             onCreate(db)
         }
     }
 
-    fun insertJournal(userEmail: String, date: String, content: String) {
+    fun insertJournal(userEmail: String, date: String, title: String, content: String, mediaUris: String?) {
         val db = writableDatabase
         val values = ContentValues()
 
         values.put("user_email", userEmail)
         values.put("date", date)
+        values.put("title", title)
         values.put("content", content)
+        values.put("media_uris", mediaUris)
 
-        // Delete existing entry for this specific user and date before inserting new one
         db.delete("journal", "user_email=? AND date=?", arrayOf(userEmail, date))
         db.insert("journal", null, values)
     }
 
-    fun getJournal(userEmail: String, date: String): String? {
+    fun getJournalData(userEmail: String, date: String): Map<String, String?>? {
         val db = readableDatabase
         val cursor = db.rawQuery(
-            "SELECT content FROM journal WHERE user_email=? AND date=?",
+            "SELECT title, content, media_uris FROM journal WHERE user_email=? AND date=?",
             arrayOf(userEmail, date)
         )
 
-        var content: String? = null
+        var data: Map<String, String?>? = null
         if (cursor.moveToFirst()) {
-            content = cursor.getString(0)
+            data = mapOf(
+                "title" to cursor.getString(0),
+                "content" to cursor.getString(1),
+                "media_uris" to cursor.getString(2)
+            )
         }
         cursor.close()
-        return content
+        return data
     }
 }

@@ -34,9 +34,10 @@
         <activity android:name=".JournalActivity"/>
         <activity android:name=".CalendarActivity"/>
         <activity android:name=".LocationActivity"/>
-        <activity android:name=".ProfileActivity"/>
+
 
     </application>
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
-
+    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES"/>
+    <uses-permission android:name="android.permission.READ_MEDIA_VIDEO"/>
 </manifest>

@@ -1,27 +1,43 @@
 package com.example.ursaandus
 
+import android.app.Activity
 import android.app.AlertDialog
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
-import android.widget.Button
-import android.widget.EditText
-import android.widget.ImageButton
-import android.widget.TextView
-import android.widget.Toast
+import android.view.View
+import android.view.ViewGroup
+import android.widget.*
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.database.FirebaseDatabase
 
 class JournalActivity : AppCompatActivity() {
 
     private lateinit var journalText: EditText
+    private lateinit var etTitle: EditText
     private lateinit var dateText: TextView
-    private lateinit var backBtn: ImageButton
     private lateinit var saveBtn: Button
+    private lateinit var backBtn: ImageButton
+    private lateinit var mediaContainer: LinearLayout
+
     private lateinit var dbHelper: JournalDatabaseHelper
     private var selectedDate: String? = null
+    private val mediaUris = mutableListOf<String>()
 
-    // Explicitly using your Database URL
     private val database = FirebaseDatabase.getInstance("https://ursaus-cc729-default-rtdb.firebaseio.com/")
     private val journalRef = database.getReference("journals")
+
+    private val pickMedia = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        if (result.resultCode == Activity.RESULT_OK) {
+            val uri = result.data?.data
+            if (uri != null) {
+                contentResolver.takePersistableUriPermission(uri, Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                addMediaToView(uri.toString())
+                mediaUris.add(uri.toString())
+            }
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -30,95 +46,132 @@ class JournalActivity : AppCompatActivity() {
         dbHelper = JournalDatabaseHelper(this)
 
         journalText = findViewById(R.id.etJournal)
+        etTitle = findViewById(R.id.etTitle)
         dateText = findViewById(R.id.tvSelectedDate)
-        backBtn = findViewById(R.id.btnBack)
         saveBtn = findViewById(R.id.btnSave)
+        backBtn = findViewById(R.id.btnBack)
+        mediaContainer = findViewById(R.id.mediaContainer)
 
-        val sharedPref = getSharedPreferences("UserSession", MODE_PRIVATE)
-        val username = sharedPref.getString("username", "User")
-        val userEmail = sharedPref.getString("email", "") ?: ""
+        val btnImage = findViewById<Button>(R.id.btnAddImage)
+        val btnVideo = findViewById<Button>(R.id.btnAddVideo)
 
         selectedDate = intent.getStringExtra("selectedDate")
-            ?: java.text.SimpleDateFormat(
-                "dd MMM yyyy",
-                java.util.Locale.getDefault()
-            ).format(java.util.Date())
+        val sharedPref = getSharedPreferences("UserSession", MODE_PRIVATE)
+        val username = sharedPref.getString("username", "User")
+        val userEmail = sharedPref.getString("email", "guest")
 
-        dateText.text = selectedDate
+        if (selectedDate != null) {
+            dateText.text = selectedDate
 
-        // Load journal from SQLite (offline-first) - Fixed to use userEmail
-        val savedText = dbHelper.getJournal(userEmail, selectedDate!!)
-        if (savedText != null) {
-            journalText.setText(savedText)
+            // 1. Load from SQLite
+            val savedData = dbHelper.getJournalData(userEmail!!, selectedDate!!)
+            if (savedData != null) {
+                etTitle.setText(savedData["title"])
+                journalText.setText(savedData["content"])
+                
+                savedData["media_uris"]?.let { uris ->
+                    if (uris.isNotEmpty()) {
+                        uris.split(",").forEach { uriStr ->
+                            addMediaToView(uriStr)
+                            mediaUris.add(uriStr)
+                        }
+                    }
+                }
+            }
+
+            // 2. Fetch from Firebase
+            fetchFromFirebase(username, userEmail, selectedDate!!)
         }
 
-        // Also fetch from Firebase to sync
-        fetchFromFirebase(username, userEmail, selectedDate!!)
-
-        // ✅ Save button click
-        saveBtn.setOnClickListener {
-            saveJournal(username, userEmail)
+        btnImage.setOnClickListener {
+            val intent = Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
+                addCategory(Intent.CATEGORY_OPENABLE)
+                type = "image/*"
+            }
+            pickMedia.launch(intent)
         }
 
-        // Back button click
-        backBtn.setOnClickListener {
-            saveJournal(username, userEmail)
-            finish()
+        btnVideo.setOnClickListener {
+            val intent = Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
+                addCategory(Intent.CATEGORY_OPENABLE)
+                type = "video/*"
+            }
+            pickMedia.launch(intent)
+        }
+
+        saveBtn.setOnClickListener { saveJournal(username, userEmail!!) }
+        backBtn.setOnClickListener { finish() }
+    }
+
+    private fun addMediaToView(uriStr: String) {
+        val uri = Uri.parse(uriStr)
+        val type = contentResolver.getType(uri)
+
+        if (type?.startsWith("image") == true) {
+            val imageView = ImageView(this)
+            imageView.layoutParams = LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                500
+            ).apply { setMargins(0, 10, 0, 10) }
+            imageView.scaleType = ImageView.ScaleType.CENTER_CROP
+            imageView.setImageURI(uri)
+            mediaContainer.addView(imageView)
+        } else if (type?.startsWith("video") == true) {
+            val videoView = VideoView(this)
+            videoView.layoutParams = LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                500
+            ).apply { setMargins(0, 10, 0, 10) }
+            videoView.setVideoURI(uri)
+            mediaContainer.addView(videoView)
+            videoView.start()
         }
     }
 
     private fun fetchFromFirebase(username: String?, userEmail: String, date: String) {
         if (username == null) return
-
         val safeDateKey = date.replace(" ", "_")
-
         journalRef.child(username).child(safeDateKey).get().addOnSuccessListener { snapshot ->
             if (snapshot.exists()) {
-                val content = snapshot.child("content").value.toString()
-                journalText.setText(content)
-                // Also update local SQLite to keep them in sync
-                dbHelper.insertJournal(userEmail, date, content)
+                val title = snapshot.child("title").value?.toString() ?: ""
+                val content = snapshot.child("content").value?.toString() ?: ""
+                val uris = snapshot.child("media_uris").value?.toString() ?: ""
+                
+                if (etTitle.text.isEmpty()) {
+                    etTitle.setText(title)
+                    journalText.setText(content)
+                    if (uris.isNotEmpty()) {
+                        mediaContainer.removeAllViews()
+                        mediaUris.clear()
+                        uris.split(",").forEach {
+                            addMediaToView(it)
+                            mediaUris.add(it)
+                        }
+                    }
+                }
+                dbHelper.insertJournal(userEmail, date, title, content, uris)
             }
-        }.addOnFailureListener { e ->
-            // Logging failure to fetch
-            android.util.Log.e("FirebaseSync", "Error fetching data", e)
         }
     }
 
     private fun saveJournal(username: String?, userEmail: String) {
-        val date = selectedDate ?: return
+        val title = etTitle.text.toString()
         val content = journalText.text.toString()
+        val date = selectedDate ?: return
+        val uris = mediaUris.joinToString(",")
 
-        if (content.isNotEmpty()) {
-            // 1. Save to SQLite (for offline access)
-            dbHelper.insertJournal(userEmail, date, content)
-            
-            // 2. Save to Firebase
-            if (username != null) {
-                val safeDateKey = date.replace(" ", "_")
-                val journalData = mapOf(
-                    "date" to date,
-                    "content" to content,
-                    "timestamp" to System.currentTimeMillis()
-                )
+        dbHelper.insertJournal(userEmail, date, title, content, uris)
 
-                journalRef.child(username).child(safeDateKey).setValue(journalData)
-                    .addOnSuccessListener {
-                        Toast.makeText(this, "Synced with Cloud ✨", Toast.LENGTH_SHORT).show()
-                    }
-                    .addOnFailureListener { e ->
-                        Toast.makeText(this, "Failed to sync: ${e.message}", Toast.LENGTH_LONG).show()
-                        android.util.Log.e("FirebaseSync", "Error saving data", e)
-                    }
-            }
-
-            AlertDialog.Builder(this)
-                .setTitle("Saved ✨")
-                .setMessage("Journal saved for $date 💛")
-                .setPositiveButton("OK", null)
-                .show()
-        } else {
-            Toast.makeText(this, "Journal is empty", Toast.LENGTH_SHORT).show()
+        if (username != null) {
+            val safeDateKey = date.replace(" ", "_")
+            val data = mapOf(
+                "title" to title,
+                "content" to content,
+                "media_uris" to uris
+            )
+            journalRef.child(username).child(safeDateKey).setValue(data)
         }
+
+        Toast.makeText(this, "Saved ✨", Toast.LENGTH_SHORT).show()
     }
 }
