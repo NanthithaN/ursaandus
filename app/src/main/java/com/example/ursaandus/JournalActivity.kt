@@ -20,6 +20,8 @@ class JournalActivity : AppCompatActivity() {
     private lateinit var saveBtn: Button
     private lateinit var backBtn: ImageButton
     private lateinit var mediaContainer: LinearLayout
+    private lateinit var smsBtn: Button
+    private lateinit var whatsappBtn: Button
 
     private lateinit var dbHelper: JournalDatabaseHelper
     private var selectedDate: String? = null
@@ -101,7 +103,45 @@ class JournalActivity : AppCompatActivity() {
 
         saveBtn.setOnClickListener { saveJournal(username, userEmail!!) }
         backBtn.setOnClickListener { finish() }
-    }
+        smsBtn = findViewById(R.id.btnSMS)
+        whatsappBtn = findViewById(R.id.btnWhatsApp)
+
+        // 📩 SMS
+        smsBtn.setOnClickListener {
+            val message = journalText.text.toString()
+            val intent = Intent(Intent.ACTION_VIEW)
+            intent.data = Uri.parse("sms:")
+            intent.putExtra("sms_body", message)
+            startActivity(intent)
+        }
+
+        // 📤 WhatsApp
+        whatsappBtn.setOnClickListener {
+            val message = journalText.text.toString()
+            val intent = Intent(Intent.ACTION_SEND)
+            
+            // Fix: mediaUri was undefined, using the first one from the list if available
+            val firstMediaUri = mediaUris.firstOrNull()?.let { Uri.parse(it) }
+
+            if (firstMediaUri != null) {
+                intent.type = "image/*"   // works for both image & video safely
+                intent.putExtra(Intent.EXTRA_STREAM, firstMediaUri)
+                intent.putExtra(Intent.EXTRA_TEXT, message)
+                intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+            } else {
+                intent.type = "text/plain"
+                intent.putExtra(Intent.EXTRA_TEXT, message)
+            }
+
+            intent.setPackage("com.whatsapp")
+
+            try {
+                startActivity(intent)
+            } catch (e: Exception) {
+                Toast.makeText(this, "WhatsApp not installed", Toast.LENGTH_SHORT).show()
+            }
+        }
+    } // ✅ Correctly closing onCreate
 
     private fun addMediaToView(uriStr: String) {
         val uri = Uri.parse(uriStr)

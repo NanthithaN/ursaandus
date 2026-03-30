@@ -11,7 +11,7 @@ import androidx.core.content.edit
 class HomeActivity : AppCompatActivity() {
 
     private lateinit var sharedPref: SharedPreferences
-
+    private lateinit var receiver: NetworkReceiver
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_home)
@@ -48,6 +48,16 @@ class HomeActivity : AppCompatActivity() {
 
         logoutBtn.setOnClickListener {
             logout()
+        }
+        receiver = NetworkReceiver()
+        registerReceiver(receiver, android.content.IntentFilter("android.net.conn.CONNECTIVITY_CHANGE"))
+    }
+    override fun onDestroy() {
+        super.onDestroy()
+        try {
+            unregisterReceiver(receiver)
+        } catch (e: Exception) {
+            e.printStackTrace()
         }
     }
 

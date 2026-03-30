@@ -148,6 +148,17 @@
             android:text="SAVE"
             android:layout_gravity="end"
             android:layout_marginTop="10dp"/>
+        <Button
+            android:id="@+id/btnSMS"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Send SMS"/>
+
+        <Button
+            android:id="@+id/btnWhatsApp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Share WhatsApp"/>
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
