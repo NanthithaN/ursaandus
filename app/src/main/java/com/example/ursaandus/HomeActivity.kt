@@ -3,17 +3,22 @@ package com.example.ursaandus
 import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
+import android.view.animation.AnimationUtils
 import android.widget.Button
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.edit
+import androidx.core.view.WindowCompat
 
 class HomeActivity : AppCompatActivity() {
 
     private lateinit var sharedPref: SharedPreferences
     private lateinit var receiver: NetworkReceiver
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        supportActionBar?.hide()
+        WindowCompat.setDecorFitsSystemWindows(window, false)
         setContentView(R.layout.activity_home)
 
         sharedPref = getSharedPreferences("UserSession", MODE_PRIVATE)
@@ -23,6 +28,13 @@ class HomeActivity : AppCompatActivity() {
         val calendarBtn = findViewById<Button>(R.id.btnCalendar)
         val locationBtn = findViewById<Button>(R.id.btnLocation)
         val logoutBtn = findViewById<Button>(R.id.btnLogout)
+
+        // ✅ ADD ANIMATIONS
+        val fadeIn = AnimationUtils.loadAnimation(this, R.anim.fade_in_slide_up)
+        welcomeText.startAnimation(fadeIn)
+        brewBtn.startAnimation(fadeIn)
+        calendarBtn.startAnimation(fadeIn)
+        locationBtn.startAnimation(fadeIn)
 
         val username = sharedPref.getString("username", "Rose")
         welcomeText.text = "Hi $username! What's brewing in your honey pot of thoughts?"
@@ -49,9 +61,11 @@ class HomeActivity : AppCompatActivity() {
         logoutBtn.setOnClickListener {
             logout()
         }
+
         receiver = NetworkReceiver()
         registerReceiver(receiver, android.content.IntentFilter("android.net.conn.CONNECTIVITY_CHANGE"))
     }
+
     override fun onDestroy() {
         super.onDestroy()
         try {

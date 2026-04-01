@@ -2,8 +2,10 @@ package com.example.ursaandus
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.animation.AnimationUtils
 import android.widget.Button
 import android.widget.EditText
+import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.edit
@@ -14,8 +16,13 @@ class LoginActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        supportActionBar?.hide() // ✅ HIDE HEADER
+        supportActionBar?.hide()
         setContentView(R.layout.activity_login)
+
+        // ✅ APPLY ANIMATION TO CARD
+        val loginCard = findViewById<LinearLayout>(R.id.loginCard)
+        val animation = AnimationUtils.loadAnimation(this, R.anim.fade_in_slide_up)
+        loginCard?.startAnimation(animation)
 
         userDb = UserDatabaseHelper(this)
 
@@ -26,7 +33,6 @@ class LoginActivity : AppCompatActivity() {
         val sharedPref = getSharedPreferences("UserSession", MODE_PRIVATE)
 
         loginBtn.setOnClickListener {
-
             val enteredEmail = emailInput.text.toString().trim()
             val enteredPin = pinInput.text.toString().trim()
 
@@ -35,23 +41,17 @@ class LoginActivity : AppCompatActivity() {
                 return@setOnClickListener
             }
 
-            // ✅ VALIDATE AGAINST DATABASE
             val userData = userDb.validateUser(enteredEmail, enteredPin)
 
             if (userData != null) {
-                // Successful login, update session
                 sharedPref.edit {
                     putString("username", userData["name"])
                     putString("email", userData["email"])
                     putBoolean("isLoggedIn", true)
                 }
-
                 Toast.makeText(this, "Login Successful", Toast.LENGTH_SHORT).show()
-
-                val intent = Intent(this, HomeActivity::class.java)
-                startActivity(intent)
+                startActivity(Intent(this, HomeActivity::class.java))
                 finish()
-
             } else {
                 Toast.makeText(this, "Invalid Email or PIN", Toast.LENGTH_SHORT).show()
             }

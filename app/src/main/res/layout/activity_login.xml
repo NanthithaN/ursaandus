@@ -6,6 +6,7 @@
 
     <!-- TOP TITLE BOX -->
     <LinearLayout
+        android:id="@+id/topTitleBox"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="@drawable/box_top"
@@ -15,25 +16,26 @@
         android:orientation="vertical">
 
         <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:text="Ursa Us"
             android:textSize="22sp"
             android:textStyle="bold"
             android:textColor="#4A2E2A"
-            android:gravity="center"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
+            android:gravity="center"/>
 
         <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:text="A private place for thoughts"
             android:textSize="12sp"
             android:textColor="#6D4C41"
-            android:gravity="center"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
+            android:gravity="center"/>
     </LinearLayout>
 
     <!-- LOGIN CARD -->
     <LinearLayout
+        android:id="@+id/loginCard"
         android:layout_width="300dp"
         android:layout_height="wrap_content"
         android:background="@drawable/box_register"
@@ -42,33 +44,33 @@
         android:orientation="vertical">
 
         <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:text="LOGIN"
             android:textSize="18sp"
             android:textColor="@android:color/white"
             android:gravity="center"
-            android:layout_marginBottom="16dp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            android:layout_marginBottom="16dp"/>
 
         <EditText
             android:id="@+id/etLoginMail"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:hint="MAIL:"
             android:textColor="@android:color/white"
             android:textColorHint="@android:color/white"
-            android:backgroundTint="@android:color/white"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            android:backgroundTint="@android:color/white"/>
 
         <EditText
             android:id="@+id/etLoginPin"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:hint="PIN:"
             android:inputType="numberPassword"
             android:textColor="@android:color/white"
             android:textColorHint="@android:color/white"
             android:backgroundTint="@android:color/white"
-            android:layout_marginTop="10dp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            android:layout_marginTop="10dp"/>
 
         <Button
             android:id="@+id/btnLogin"

@@ -2,13 +2,16 @@ package com.example.ursaandus
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.animation.AnimationUtils
 import android.widget.Button
 import android.widget.EditText
+import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.edit
+import androidx.core.view.WindowCompat
 
 class RegisterActivity : AppCompatActivity() {
 
@@ -16,8 +19,15 @@ class RegisterActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        supportActionBar?.hide() // ✅ HIDE HEADER
+        supportActionBar?.hide()
+        // ✅ Make it edge-to-edge for modern look
+        WindowCompat.setDecorFitsSystemWindows(window, false)
         setContentView(R.layout.activity_register)
+
+        // ✅ APPLY ANIMATION TO REGISTER CARD
+        val registerCard = findViewById<LinearLayout>(R.id.registerCard)
+        val animation = AnimationUtils.loadAnimation(this, R.anim.fade_in_slide_up)
+        registerCard?.startAnimation(animation)
 
         userDb = UserDatabaseHelper(this)
 
@@ -35,18 +45,13 @@ class RegisterActivity : AppCompatActivity() {
             val pin = pinEditText.text.toString().trim()
 
             if (name.isNotEmpty() && mail.isNotEmpty() && pin.isNotEmpty()) {
-                
-                // ✅ SAVE TO PERMANENT USER DATABASE
                 val success = userDb.registerUser(name, mail, pin)
-                
                 if (success) {
-                    // Set current session
                     sharedPref.edit {
                         putString("username", name)
                         putString("email", mail)
                         putBoolean("isLoggedIn", true)
                     }
-
                     AlertDialog.Builder(this)
                         .setTitle("Registration Successful")
                         .setMessage("You have registered successfully, $name!")
